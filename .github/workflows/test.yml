@@ -1,0 +1,35 @@
+name: Test install environment
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Cache conda environment
+        uses: actions/cache@v4
+        with:
+          path: /usr/share/miniconda/envs
+          key: ${{ runner.os }}-conda-${{ hashFiles('conda_env.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-conda-
+
+      - name: Setup conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          environment-file: conda_env.yml
+          activate-environment: synchformer
+          use-only-tar-bz2: true
+
+      - name: Test environment
+        shell: bash -l {0}
+        run: |
+          conda info --envs
+          python --version
