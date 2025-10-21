@@ -9,3 +9,5 @@ temp
 *.pyth
 todel
 .vscode
+build
+*.egg-info
